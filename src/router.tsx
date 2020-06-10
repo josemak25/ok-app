@@ -2,11 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useTheme } from './theme';
+import Screens from './screens';
 import HomeNavigator from './navigator/HomeNavigator';
 
 const RootStack = createStackNavigator();
-
-import Screens from './screens';
 
 export default function AppNavigator() {
   const { fonts, colors } = useTheme();
@@ -14,7 +13,7 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <RootStack.Navigator
-        initialRouteName="SplashScreen"
+        initialRouteName="WalkThroughScreen"
         screenOptions={{
           headerShown: false,
           headerBackTitleStyle: {
@@ -26,8 +25,8 @@ export default function AppNavigator() {
         }}
       >
         <RootStack.Screen
-          name="SplashScreen"
-          component={Screens.SplashScreen}
+          name="WalkThroughScreen"
+          component={Screens.WalkThroughScreen}
         />
 
         <RootStack.Screen name="HomeScreen" component={HomeNavigator} />
