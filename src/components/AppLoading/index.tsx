@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 import { AppLoading as ExpoAppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
@@ -8,6 +9,8 @@ type FontType = { [name: string]: Font.FontSource };
 type AppLoadingProps = { setIsAppReady(T: boolean): void };
 
 export default function AppLoading({ setIsAppReady }: AppLoadingProps) {
+  SplashScreen.preventAutoHideAsync();
+
   const cacheImages = (images: number[]) => {
     return images.map((image) => {
       return typeof image === 'string'
@@ -41,10 +44,17 @@ export default function AppLoading({ setIsAppReady }: AppLoadingProps) {
     await Promise.all([...imageAssets, ...fontAssets]);
   };
 
+  const handleComplete = () => {
+    setTimeout(async () => {
+      await SplashScreen.hideAsync();
+      setIsAppReady(true);
+    }, 500);
+  };
+
   return (
     <ExpoAppLoading
       startAsync={loadAllAppAssets}
-      onFinish={() => setIsAppReady(true)}
+      onFinish={handleComplete}
       onError={console.warn}
     />
   );
