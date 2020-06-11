@@ -1,6 +1,1 @@
-export interface GameBookmarkInterface {
-  id: number;
-  game_id: string;
-  created_at: string;
-  updated_at: string;
-}
+export const USER_FIRST_LAUNCH = '@FIRST_TIME_LAUNCH';

@@ -6,8 +6,10 @@ enum COLORS {
   WHITE_BG_COLOR = '#FFFFFF',
   BLACK_FONT_COLOR = '#323B43',
   WHITE_FONT_COLOR = '#FFFFFF',
-  ACTION_BG_COLOR = '#FD4741',
-  VERIFIED_COLOR = '#36E67F'
+  ACTION_BG_COLOR = '#ff4742',
+  INACTIVE_BG_COLOR = '#E2E6ED',
+  VERIFIED_COLOR = '#36E67F',
+  BOX_SHADOW_COLOR = '#A1AEB9'
 }
 
 // All app font sizes
@@ -33,6 +35,8 @@ declare module 'styled-components' {
       WHITE_FONT_COLOR: string;
       ACTION_BG_COLOR: string;
       VERIFIED_COLOR: string;
+      INACTIVE_BG_COLOR: string;
+      BOX_SHADOW_COLOR: string;
     };
 
     // All Global App Font Sizes

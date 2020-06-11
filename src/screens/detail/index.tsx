@@ -10,7 +10,7 @@ interface DetailScreenProps extends NavigationInterface {
 export default function DetailScreen(props: DetailScreenProps) {
   return (
     <Container>
-      <Button title="detail screen" />
+      <Button title="detail screen" buttonStyle={{ padding: 15 }} />
     </Container>
   );
 }
