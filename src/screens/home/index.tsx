@@ -10,7 +10,7 @@ interface HomeScreenProps extends NavigationInterface {
 export default function HomeScreen(props: HomeScreenProps) {
   return (
     <Container>
-      <Button title="home screen" />
+      <Button title="home screen" buttonStyle={{ padding: 15 }} />
     </Container>
   );
 }
