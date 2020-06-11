@@ -1,9 +1,11 @@
+import SplashScreen from './splash';
+import WalkThroughScreen from './walk_through';
 import HomeScreen from './home';
 import DetailScreen from './detail';
-import WalkThroughScreen from './walk_through';
 
 export default {
+  SplashScreen,
+  WalkThroughScreen,
   HomeScreen,
-  DetailScreen,
-  WalkThroughScreen
+  DetailScreen
 };
