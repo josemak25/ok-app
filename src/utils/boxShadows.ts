@@ -1,4 +1,6 @@
 import { StyleSheet } from 'react-native';
+import { theme } from '../theme/types';
+import hexToRGB from './hexToRGB';
 
 interface BoxShadowInterface {
   elevation: number;
@@ -11,7 +13,7 @@ interface BoxShadowInterface {
 
 function createBoxShadowStyle({
   elevation,
-  shadowColor,
+  shadowColor = hexToRGB(theme.colors.BOX_SHADOW_COLOR, 0.65),
   shadowOpacity = 0.4,
   shadowRadius = Math.floor((0.8 * elevation) / 2),
   width = 0,
