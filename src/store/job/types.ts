@@ -11,6 +11,11 @@ export enum JOB_TYPES {
   GET_JOB_ERROR = 'GET_JOB_ERROR'
 }
 
+export enum JOB_ACTION_TYPES {
+  FETCH_ALL_JOBS = 'FETCH_ALL_JOBS',
+  PAGINATE_JOBS = 'FETCH_ALL_JOBS'
+}
+
 // TYPESCRIPT TYPES
 export type JobInitialState = {
   isLoading: boolean;
