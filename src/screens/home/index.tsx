@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { useState, useEffect, Fragment } from 'react';
+import { ScrollView, RefreshControl, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,6 +9,12 @@ import InputField from '../../components/input';
 import boxShadow from '../../utils/boxShadows';
 import Category from './category';
 import Job from './job';
+import { JOB_ACTION_TYPES } from '../../store/job/types';
+import { JobInterface } from '../../store/job/types';
+import LoadingJobs from '../../components/loadingJobs';
+import jobActions from '../../store/job/actions';
+import { useStore } from '../../store';
+import _renderEmptyList from './renderEmptyList';
 
 import { Container, WelcomeText, SearchJob } from './styles';
 
@@ -20,17 +26,65 @@ interface HomeScreenProps extends NavigationInterface {
 export default function HomeScreen(props: HomeScreenProps) {
   const { colors } = useTheme();
 
-  const [state, setState] = useState({ searchWord: '' });
+  const {
+    dispatch,
+    store: { jobState }
+  } = useStore();
+
+  const [state, setState] = useState<{
+    searchWord: string;
+    refreshing: boolean;
+    loading: boolean;
+    jobsListing: JobInterface[];
+    page: number;
+  }>({
+    searchWord: '',
+    refreshing: false,
+    loading: false,
+    jobsListing: [],
+    page: 1
+  });
+
+  useEffect(() => {
+    if (!jobState.jobs.length) {
+      jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
+    }
+    setState({ ...state, jobsListing: jobState.jobs.slice(0, 10) });
+  }, [jobState.jobs.length]);
+
+  const _onRefresh = async () => {
+    setState({ ...state, refreshing: true });
+    await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
+    setState({
+      ...state,
+      refreshing: false,
+      jobsListing: jobState.jobs.slice(0, 10)
+    });
+  };
 
   const handleSubmit = () => setState({ ...state, searchWord: '' });
 
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.DARK_BG_COLOR
-      }}
-    >
+  const _rowRenderer = ({ item }: any) => <Job {...item} {...props} />;
+
+  const _handleEndReached = () => {
+    const nextPage = state.page + 1;
+
+    const paginatedJobsListing = jobState.jobs.slice(
+      nextPage * 10,
+      nextPage * 10 + 10
+    );
+
+    setState({
+      ...state,
+      page: nextPage,
+      jobsListing: state.jobsListing.concat(paginatedJobsListing)
+    });
+  };
+
+  const _renderFooter = () => <LoadingJobs size={30} />;
+
+  const _renderHeader = () => (
+    <Fragment>
       <Container>
         <WelcomeText>Find your Job</WelcomeText>
         <InputField
@@ -48,7 +102,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               shadowOpacity: 0.25,
               shadowRadius: 2
             }),
-            { marginTop: RFValue(50) }
+            { marginTop: RFValue(30) }
           ]}
           inputStyle={{ paddingRight: 20 }}
         >
@@ -60,20 +114,51 @@ export default function HomeScreen(props: HomeScreenProps) {
         </InputField>
 
         <SearchJob>Search by category</SearchJob>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            height: RFValue(100),
-            marginTop: 20
-          }}
-        >
-          {props.categories.map((category) => (
-            <Category {...category} key={category.name} />
-          ))}
-        </ScrollView>
       </Container>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginTop: 20 }}
+        contentContainerStyle={{ height: RFValue(100), paddingLeft: 10 }}
+      >
+        {props.categories.map((category) => (
+          <Category {...category} key={category.name} />
+        ))}
+      </ScrollView>
+    </Fragment>
+  );
+
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.DARK_BG_COLOR
+      }}
+    >
+      <FlatList
+        style={{ flex: 1 }}
+        data={state.jobsListing}
+        renderItem={_rowRenderer}
+        ListHeaderComponent={_renderHeader}
+        ListFooterComponent={_renderFooter}
+        ListFooterComponentStyle={{ paddingTop: 5 }}
+        //@ts-ignore
+        ListEmptyComponent={_renderEmptyList}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(game: JobInterface) => `${game.id}`}
+        onEndReachedThreshold={0}
+        initialNumToRender={5}
+        onEndReached={_handleEndReached}
+        refreshControl={
+          <RefreshControl
+            refreshing={state.refreshing}
+            onRefresh={_onRefresh}
+            tintColor={colors.ACTION_BG_COLOR}
+            colors={[colors.ACTION_BG_COLOR]}
+          />
+        }
+      />
     </SafeAreaView>
   );
 }

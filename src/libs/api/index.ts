@@ -19,8 +19,8 @@ class API {
     this.BASE_URL = ENV.DATABASE_URI;
   }
 
-  get(): Promise<any> {
-    return fetch(`${this.BASE_URL}`, {
+  get(uriPath: string): Promise<any> {
+    return fetch(`${this.BASE_URL}/${uriPath}`, {
       method: 'GET',
       headers: { Accept: 'application/json' }
     });

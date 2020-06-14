@@ -6,6 +6,9 @@ import { JobInterface } from '../../../store/job/types';
 import hexToRGB from '../../../utils/hexToRGB';
 import { RFValue } from 'react-native-responsive-fontsize';
 import boxShadow from '../../../utils/boxShadows';
+import { useTheme } from '../../../theme';
+import getCompanyLogo from '../../../utils/getCompanyLogo';
+import generateColor from '../../../utils/generateColor';
 
 import {
   Container,
@@ -27,7 +30,17 @@ interface JobProps extends NavigationInterface, JobInterface {
 }
 
 export default function Job(props: JobProps) {
-  const { navigation } = props;
+  const { colors, fonts } = useTheme();
+
+  const {
+    navigation,
+    company,
+    company_logo,
+    date,
+    position,
+    verified,
+    tags
+  } = props;
 
   return (
     <Card
@@ -35,27 +48,24 @@ export default function Job(props: JobProps) {
         width: '100%',
         flexDirection: 'row',
         alignItems: 'flex-start',
-        padding: 20
+        padding: 20,
+        marginTop: 4,
+        marginBottom: 4
       }}
     >
       <LeftContainer>
-        <CompanyName>Wallethub</CompanyName>
-        <JobPosition>Senior Manual Quality Assurance Engineer</JobPosition>
+        <CompanyName>{company}</CompanyName>
+        <JobPosition>{position}</JobPosition>
 
-        <JobTagsContainer>
-          <JobTag style={{ backgroundColor: hexToRGB('#CF36E3', 0.3) }}>
-            <JobTagName style={{ color: '#CF36E3' }}>vue.js</JobTagName>
-          </JobTag>
-          <JobTag style={{ backgroundColor: hexToRGB('#E3CF36', 0.3) }}>
-            <JobTagName style={{ color: '#E3CF36' }}>java</JobTagName>
-          </JobTag>
-          <JobTag style={{ backgroundColor: hexToRGB('#3636E3', 0.3) }}>
-            <JobTagName style={{ color: '#3636E3' }}>react</JobTagName>
-          </JobTag>
-          <JobTag style={{ backgroundColor: hexToRGB('#59C36A', 0.3) }}>
-            <JobTagName style={{ color: '#59C36A' }}>react native</JobTagName>
-          </JobTag>
-        </JobTagsContainer>
+        {tags ? (
+          <JobTagsContainer>
+            {tags.map((tag, index) => (
+              <JobTag key={`${tag + index.toString()}`}>
+                <JobTagName>{tag}</JobTagName>
+              </JobTag>
+            ))}
+          </JobTagsContainer>
+        ) : null}
       </LeftContainer>
 
       <RightContainer>
@@ -72,18 +82,36 @@ export default function Job(props: JobProps) {
               })
             ]}
           >
-            <Image
-              style={{
-                width: RFValue(50),
-                height: RFValue(50),
-                borderRadius: RFValue(50 / 2)
-              }}
-              source={{ uri: 'https://bit.ly/2XWrqMz', cache: 'force-cache' }}
-            />
+            {company_logo ? (
+              <Image
+                style={{
+                  width: RFValue(50),
+                  height: RFValue(50),
+                  borderRadius: RFValue(50 / 2)
+                }}
+                source={{ uri: company_logo, cache: 'force-cache' }}
+              />
+            ) : (
+              <CompanyName
+                style={{
+                  fontSize: RFValue(fonts.LARGE_SIZE * 2.5),
+                  color: colors.BOX_SHADOW_COLOR
+                }}
+              >
+                {getCompanyLogo(company)}
+              </CompanyName>
+            )}
           </CompanyLogo>
-          <Verified>
-            <VerifiedText>Verified</VerifiedText>
-          </Verified>
+
+          {verified ? (
+            <Verified>
+              <VerifiedText>Verified</VerifiedText>
+            </Verified>
+          ) : (
+            <Verified
+              style={{ backgroundColor: colors.WHITE_BG_COLOR }}
+            ></Verified>
+          )}
         </Container>
       </RightContainer>
     </Card>
