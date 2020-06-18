@@ -9,6 +9,7 @@ import boxShadow from '../../../utils/boxShadows';
 import { useTheme } from '../../../theme';
 import getCompanyLogo from '../../../utils/getCompanyLogo';
 import generateColor from '../../../utils/generateColor';
+import timeSince from '../../../utils/timeSince';
 
 import {
   Container,
@@ -22,7 +23,7 @@ import {
   JobPostedTime,
   Verified,
   VerifiedText,
-  CompanyLogo
+  CompanyLogo,
 } from './styles';
 
 interface JobProps extends NavigationInterface, JobInterface {
@@ -59,9 +60,9 @@ export default function Job(props: JobProps) {
 
         {tags ? (
           <JobTagsContainer>
-            {tags.map((tag, index) => (
-              <JobTag key={`${tag + index.toString()}`}>
-                <JobTagName>{tag}</JobTagName>
+            {tags.map(({name, color}, index) => (
+              <JobTag key={`${name + index.toString()}`} style={{ backgroundColor: hexToRGB(color, 0.4)}}>
+                <JobTagName style={{ color }}>{name}</JobTagName>
               </JobTag>
             ))}
           </JobTagsContainer>
@@ -70,7 +71,7 @@ export default function Job(props: JobProps) {
 
       <RightContainer>
         <Container>
-          <JobPostedTime>5h</JobPostedTime>
+          <JobPostedTime>{timeSince(date)}</JobPostedTime>
           <CompanyLogo
             style={[
               boxShadow({

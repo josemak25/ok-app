@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { ScrollView, RefreshControl, FlatList } from 'react-native';
+import { ScrollView, RefreshControl, SectionList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { AntDesign } from '@expo/vector-icons';
@@ -16,7 +16,7 @@ import jobActions from '../../store/job/actions';
 import { useStore } from '../../store';
 import _renderEmptyList from './renderEmptyList';
 
-import { Container, WelcomeText, SearchJob } from './styles';
+import { Container, WelcomeText, SearchJob, Section } from './styles';
 
 interface HomeScreenProps extends NavigationInterface {
   testID?: string;
@@ -46,20 +46,23 @@ export default function HomeScreen(props: HomeScreenProps) {
   });
 
   useEffect(() => {
-    if (!jobState.jobs.length) {
+    const [todayJobs] = jobState.jobs;
+
+    if (!todayJobs.data.length) {
       jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
     }
-    setState({ ...state, jobsListing: jobState.jobs.slice(0, 10) });
-  }, [jobState.jobs.length]);
+    // console.log(todayJobs.data.length)
+    // setState({ ...state, jobsListing: jobState.jobs.slice(0, 10) });
+  }, []);
 
   const _onRefresh = async () => {
     setState({ ...state, refreshing: true });
     await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
-    setState({
-      ...state,
-      refreshing: false,
-      jobsListing: jobState.jobs.slice(0, 10)
-    });
+    // setState({
+    //   ...state,
+    //   refreshing: false,
+    //   jobsListing: jobState.jobs.slice(0, 10)
+    // });
   };
 
   const handleSubmit = () => setState({ ...state, searchWord: '' });
@@ -74,11 +77,11 @@ export default function HomeScreen(props: HomeScreenProps) {
       nextPage * 10 + 10
     );
 
-    setState({
-      ...state,
-      page: nextPage,
-      jobsListing: state.jobsListing.concat(paginatedJobsListing)
-    });
+    // setState({
+    //   ...state,
+    //   page: nextPage,
+    //   jobsListing: state.jobsListing.concat(paginatedJobsListing)
+    // });
   };
 
   const _renderFooter = () => <LoadingJobs size={30} />;
@@ -136,13 +139,17 @@ export default function HomeScreen(props: HomeScreenProps) {
         backgroundColor: colors.DARK_BG_COLOR
       }}
     >
-      <FlatList
+      <SectionList
         style={{ flex: 1 }}
-        data={state.jobsListing}
+        sections={jobState.jobs}
         renderItem={_rowRenderer}
         ListHeaderComponent={_renderHeader}
         ListFooterComponent={_renderFooter}
         ListFooterComponentStyle={{ paddingTop: 5 }}
+        renderSectionHeader={({ section: { title } }) => {
+          return !jobState.isLoading ? (
+          <Section>{title}</Section>
+        ) : null}}
         //@ts-ignore
         ListEmptyComponent={_renderEmptyList}
         showsVerticalScrollIndicator={false}
@@ -150,6 +157,7 @@ export default function HomeScreen(props: HomeScreenProps) {
         onEndReachedThreshold={0}
         initialNumToRender={5}
         onEndReached={_handleEndReached}
+        stickySectionHeadersEnabled={false}
         refreshControl={
           <RefreshControl
             refreshing={state.refreshing}

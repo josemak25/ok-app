@@ -30,7 +30,6 @@ export const JobTag = styled.View`
   padding: 10px;
   border-radius: 5px;
   margin: 5px 10px 5px 0px;
-  border: 1.5px ${({ theme }) => theme.colors.BLACK_FONT_COLOR} solid;
 `;
 
 export const JobTagName = styled.Text`
@@ -81,4 +80,15 @@ export const JobPosition = styled.Text`
   font-family: ${({ theme }) => theme.fonts.CORE_SANS_MEDIUM};
   color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
   padding-top: 5px;
+`;
+
+export const Category = styled.View`
+  padding: 5px 20px;
+  background-color: #36e67f;
+`;
+
+export const CategoryText = styled.Text`
+  font-size: ${({ theme }) => RFValue(theme.fonts.LARGE_SIZE + 9)}px;
+  font-family: ${({ theme }) => theme.fonts.CORE_SANS_BOLD};
+  color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
 `;
