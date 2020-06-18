@@ -40,11 +40,17 @@ export default function Job(props: JobProps) {
     date,
     position,
     verified,
-    tags
+    tags,
+    url
   } = props;
+
+  const handleNavigation = () => {
+    navigation.navigate('DetailScreen', { jobLink: url });
+  };
 
   return (
     <Card
+      onPress={handleNavigation}
       style={{
         width: '100%',
         flexDirection: 'row',
