@@ -18,3 +18,10 @@ export const SearchJob = styled.TextInput`
   color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
   margin-top: 20px;
 `;
+
+export const Section = styled.Text`
+  font-size: ${({ theme }) => RFValue(theme.fonts.LARGE_SIZE + 9)}px;
+  font-family: ${({ theme }) => theme.fonts.CORE_SANS_BOLD};
+  color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
+  padding: 20px;
+`;
