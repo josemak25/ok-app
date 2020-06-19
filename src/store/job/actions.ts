@@ -5,7 +5,9 @@ import generateColor from '../../utils/generateColor';
 
 const getJobStarted = (): JobAction => ({ type: JOB_TYPES.GET_JOB_STARTED });
 
-const getJobSuccess = (payload: {title: string, data: JobInterface[]}[]): JobAction => ({
+const getJobSuccess = (
+  payload: { title: string; data: JobInterface[] }[]
+): JobAction => ({
   type: JOB_TYPES.GET_JOB_SUCCESS,
   payload
 });
@@ -26,64 +28,76 @@ export default async function jobActions(
   switch (actionType) {
     case JOB_ACTION_TYPES.FETCH_ALL_JOBS:
       try {
-        // make network request here
-
         // fetch all jobs from https://remoteok.io/api
         const response = await API.get('api');
 
         const data = (await response.json()) as JobInterface[];
 
-        const jobs = data.reduce<{title: string, data: JobInterface[]}[]>((acc, job) => {
-          const [todaySection, yesterdaySection, last7DaysSection, Last30DaysSection] = acc;
-          
-          const { date, tags } = job;
-          
-          if (!date) return acc;
-          
-          if (tags.length) {
-            // @ts-ignore
-            job.tags = tags.map(name => ({name, color: generateColor()}))
-          }
+        const jobs = data.reduce<{ title: string; data: JobInterface[] }[]>(
+          (acc, job) => {
+            const [
+              todaySection,
+              yesterdaySection,
+              last7DaysSection,
+              Last30DaysSection
+            ] = acc;
 
-          const section = getJobPeriod(date);
+            const { date, tags } = job;
 
-          if (section === todaySection.title) {
-            todaySection.data.push(job);
-          } 
+            if (!date) return acc;
 
-          if (section === yesterdaySection.title) {
-            yesterdaySection.data.push(job);
-          } 
+            if (tags.length) {
+              // @ts-ignore
+              job.tags = tags.map((name) => ({ name, color: generateColor() }));
+            }
 
-          if (section === last7DaysSection.title) {
-            last7DaysSection.data.push(job);
-          } 
+            const section = getJobPeriod(date);
 
-          if (section === Last30DaysSection.title) {
-            Last30DaysSection.data.push(job);
-          }
+            if (section === todaySection.title) {
+              todaySection.data.push(job);
+            }
 
-          acc = [...acc, todaySection, yesterdaySection, last7DaysSection, Last30DaysSection]
+            if (section === yesterdaySection.title) {
+              yesterdaySection.data.push(job);
+            }
 
-           return acc
-        }, [
-          {
-            title: "Today",
-            data: []
+            if (section === last7DaysSection.title) {
+              last7DaysSection.data.push(job);
+            }
+
+            if (section === Last30DaysSection.title) {
+              Last30DaysSection.data.push(job);
+            }
+
+            acc = [
+              ...acc,
+              todaySection,
+              yesterdaySection,
+              last7DaysSection,
+              Last30DaysSection
+            ];
+
+            return acc;
           },
-          {
-            title: "Yesterday",
-            data: []
-          },
-          {
-            title: "Last 7 days",
-            data: []
-          },
-          {
-            title: "Last 30 days",
-            data: []
-          }
-        ])
+          [
+            {
+              title: 'Today',
+              data: []
+            },
+            {
+              title: 'Yesterday',
+              data: []
+            },
+            {
+              title: 'Last 7 days',
+              data: []
+            },
+            {
+              title: 'Last 30 days',
+              data: []
+            }
+          ]
+        );
 
         dispatch(getJobSuccess(jobs));
       } catch (error) {
