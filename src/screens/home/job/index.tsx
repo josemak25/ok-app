@@ -23,14 +23,14 @@ import {
   JobPostedTime,
   Verified,
   VerifiedText,
-  CompanyLogo,
+  CompanyLogo
 } from './styles';
 
 interface JobProps extends NavigationInterface, JobInterface {
   testID?: string;
 }
 
-export default function Job(props: JobProps) {
+const Job = (props: JobProps) => {
   const { colors, fonts } = useTheme();
 
   const {
@@ -66,8 +66,11 @@ export default function Job(props: JobProps) {
 
         {tags ? (
           <JobTagsContainer>
-            {tags.map(({name, color}, index) => (
-              <JobTag key={`${name + index.toString()}`} style={{ backgroundColor: hexToRGB(color, 0.4)}}>
+            {tags.map(({ name, color }, index) => (
+              <JobTag
+                key={`${name + index.toString()}`}
+                style={{ backgroundColor: hexToRGB(color, 0.4) }}
+              >
                 <JobTagName style={{ color }}>{name}</JobTagName>
               </JobTag>
             ))}
@@ -86,15 +89,22 @@ export default function Job(props: JobProps) {
                 height: 1,
                 shadowOpacity: 0.25,
                 shadowRadius: 2
-              })
+              }),
+              {
+                width: tags.length <= 3 ? RFValue(50) : RFValue(60),
+                height: tags.length <= 3 ? RFValue(50) : RFValue(60),
+                borderRadius:
+                  tags.length <= 3 ? RFValue(50 / 2) : RFValue(60 / 2)
+              }
             ]}
           >
             {company_logo ? (
               <Image
                 style={{
-                  width: RFValue(50),
-                  height: RFValue(50),
-                  borderRadius: RFValue(50 / 2)
+                  width: tags.length <= 3 ? RFValue(40) : RFValue(50),
+                  height: tags.length <= 3 ? RFValue(40) : RFValue(50),
+                  borderRadius:
+                    tags.length <= 3 ? RFValue(40 / 2) : RFValue(50 / 2)
                 }}
                 source={{ uri: company_logo, cache: 'force-cache' }}
               />
@@ -123,4 +133,6 @@ export default function Job(props: JobProps) {
       </RightContainer>
     </Card>
   );
-}
+};
+
+export default React.memo(Job, () => false);
