@@ -3,24 +3,7 @@ import { JOB_TYPES, JobInitialState, JobAction } from './types';
 export const jobInitialState = {
   isLoading: false,
   error: null,
-  jobs: [
-    {
-      title: "Today",
-      data: []
-    },
-    {
-      title: "Yesterday",
-      data: []
-    },
-    {
-      title: "Last 7 days",
-      data: []
-    },
-    {
-      title: "Last 30 days",
-      data: []
-    }
-  ]
+  jobs: []
 } as JobInitialState;
 
 export default function jobReducer(state = jobInitialState, action: JobAction) {

@@ -8,8 +8,9 @@ import { useTheme } from './theme';
 import Screens from './screens';
 
 import HomeNavigator from './navigator/HomeNavigator';
+import { RootStackParamList } from './screens/types';
 
-const RootStack = createStackNavigator();
+const RootStack = createStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   const { fonts, colors } = useTheme();

@@ -1,10 +1,11 @@
 import { StackScreenProps } from '@react-navigation/stack';
 
 // App Navigation prop types
-type RootStackParamList = {
+export type RootStackParamList = {
+  SplashScreen: undefined;
   HomeScreen: undefined;
   WalkThroughScreen: undefined;
-  DetailScreen: { userId: string } | undefined;
+  DetailScreen: { jobLink: string };
 };
 
 export type NavigationInterface = StackScreenProps<RootStackParamList>;

@@ -73,6 +73,7 @@ export const CompanyName = styled.Text`
   font-size: ${({ theme }) => RFValue(theme.fonts.LARGE_SIZE + 3)}px;
   font-family: ${({ theme }) => theme.fonts.CORE_SANS_BOLD};
   color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
+  text-transform: capitalize;
 `;
 
 export const JobPosition = styled.Text`
