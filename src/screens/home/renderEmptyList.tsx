@@ -6,11 +6,10 @@ import { RFValue } from 'react-native-responsive-fontsize';
 export default function _renderEmptyList() {
   const { colors } = useTheme();
 
-  const emptyList = [1, 2, 3, 4];
-
-  return emptyList.map((index) => (
+  return [...new Array(5)].map((_, index) => (
     <SkeletonContent
-      key={index}
+      key={index.toString()}
+      boneColor={colors.DARK_BG_COLOR}
       containerStyle={{
         height: 200,
         width: '100%',
