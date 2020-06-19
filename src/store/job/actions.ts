@@ -41,8 +41,10 @@ export default async function jobActions(
           if (!date) return acc;
           
           if (tags.length) {
+            const colors = generateColor(tags.length)
+            // console.log(colors)
             // @ts-ignore
-            job.tags = tags.map(name => ({name, color: generateColor()}))
+            job.tags = tags.map((name, index) => ({name, color: colors[index]}))
           }
 
           const section = getJobPeriod(date);
