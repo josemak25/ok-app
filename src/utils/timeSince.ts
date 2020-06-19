@@ -13,36 +13,6 @@ export default (date: Date) => {
   const month = 30 * day;
   const year = 12 * month;
 
-  const MONTHS = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
-  const DATE_CONSTANTS = {
-    January: 31,
-    February: 29,
-    March: 31,
-    April: 30,
-    May: 31,
-    June: 30,
-    July: 31,
-    August: 31,
-    September: 30,
-    October: 31,
-    November: 30,
-    December: 31
-  };
-
   const currentDate = new Date();
 
   const timeDifference = currentDate.getTime() - timestamp.getTime();
@@ -50,7 +20,7 @@ export default (date: Date) => {
   switch (true) {
     case Math.floor(timeDifference / year) > 1:
       return `${Math.floor(timeDifference / year)}y`;
-      
+
     case Math.floor(timeDifference / month) > 1:
       return `${Math.floor(timeDifference / month)}m`;
 

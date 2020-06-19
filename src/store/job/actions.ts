@@ -5,7 +5,9 @@ import generateColor from '../../utils/generateColor';
 
 const getJobStarted = (): JobAction => ({ type: JOB_TYPES.GET_JOB_STARTED });
 
-const getJobSuccess = (payload: {title: string, data: JobInterface[]}[]): JobAction => ({
+const getJobSuccess = (
+  payload: { title: string; data: JobInterface[] }[]
+): JobAction => ({
   type: JOB_TYPES.GET_JOB_SUCCESS,
   payload
 });
@@ -26,8 +28,6 @@ export default async function jobActions(
   switch (actionType) {
     case JOB_ACTION_TYPES.FETCH_ALL_JOBS:
       try {
-        // make network request here
-
         // fetch all jobs from https://remoteok.io/api
         const response = await API.get('api');
 
@@ -68,24 +68,26 @@ export default async function jobActions(
           acc = [...acc, todaySection, yesterdaySection, last7DaysSection, Last30DaysSection]
 
            return acc
-        }, [
-          {
-            title: "Today",
-            data: []
-          },
-          {
-            title: "Yesterday",
-            data: []
-          },
-          {
-            title: "Last 7 days",
-            data: []
-          },
-          {
-            title: "Last 30 days",
-            data: []
-          }
-        ])
+        }, 
+          [
+            {
+              title: 'Today',
+              data: []
+            },
+            {
+              title: 'Yesterday',
+              data: []
+            },
+            {
+              title: 'Last 7 days',
+              data: []
+            },
+            {
+              title: 'Last 30 days',
+              data: []
+            }
+          ]
+        );
 
         dispatch(getJobSuccess(jobs));
       } catch (error) {
