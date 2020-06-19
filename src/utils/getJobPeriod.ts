@@ -45,7 +45,6 @@ const isLast7Days = (jobDate: Date) => {
   const endTime = new Date(dayBeforeYesterday.toLocaleDateString()).getTime()
 
 
-// Throw an exception if start date is after end date or if any date is `Invalid Date`
 if (!(startTime <= endTime)) throw new RangeError('Invalid interval')
 
 return time >= startTime && time <= endTime  
