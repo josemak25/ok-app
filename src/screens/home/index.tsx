@@ -26,63 +26,35 @@ interface HomeScreenProps extends NavigationInterface {
 export default function HomeScreen(props: HomeScreenProps) {
   const { colors } = useTheme();
 
+  const { categories, navigation } = props;
+
   const {
     dispatch,
     store: { jobState }
   } = useStore();
 
-  const [state, setState] = useState<{
-    searchWord: string;
-    refreshing: boolean;
-    loading: boolean;
-    jobsListing: JobInterface[];
-    page: number;
-  }>({
+  const [state, setState] = useState({
     searchWord: '',
-    refreshing: false,
-    loading: false,
-    jobsListing: [],
-    page: 1
+    refreshing: false
   });
 
   useEffect(() => {
-    const [todayJobs] = jobState.jobs;
-
-    if (!todayJobs.data.length) {
+    if (!jobState.jobs.length) {
       jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
     }
-    // console.log(todayJobs.data.length)
-    // setState({ ...state, jobsListing: jobState.jobs.slice(0, 10) });
   }, []);
 
   const _onRefresh = async () => {
     setState({ ...state, refreshing: true });
     await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
-    // setState({
-    //   ...state,
-    //   refreshing: false,
-    //   jobsListing: jobState.jobs.slice(0, 10)
-    // });
+    setState({ ...state, refreshing: false });
   };
 
   const handleSubmit = () => setState({ ...state, searchWord: '' });
 
-  const _rowRenderer = ({ item }: any) => <Job {...item} {...props} />;
-
-  const _handleEndReached = () => {
-    const nextPage = state.page + 1;
-
-    const paginatedJobsListing = jobState.jobs.slice(
-      nextPage * 10,
-      nextPage * 10 + 10
-    );
-
-    // setState({
-    //   ...state,
-    //   page: nextPage,
-    //   jobsListing: state.jobsListing.concat(paginatedJobsListing)
-    // });
-  };
+  const _rowRenderer = ({ item }: any) => (
+    <Job {...item} navigation={navigation} />
+  );
 
   const _renderFooter = () => <LoadingJobs size={30} />;
 
@@ -125,7 +97,7 @@ export default function HomeScreen(props: HomeScreenProps) {
         style={{ marginTop: 20 }}
         contentContainerStyle={{ height: RFValue(100), paddingLeft: 10 }}
       >
-        {props.categories.map((category) => (
+        {categories.map((category) => (
           <Category {...category} key={category.name} />
         ))}
       </ScrollView>
@@ -146,18 +118,19 @@ export default function HomeScreen(props: HomeScreenProps) {
         ListHeaderComponent={_renderHeader}
         ListFooterComponent={_renderFooter}
         ListFooterComponentStyle={{ paddingTop: 5 }}
-        renderSectionHeader={({ section: { title } }) => {
-          return !jobState.isLoading ? (
-          <Section>{title}</Section>
-        ) : null}}
         //@ts-ignore
         ListEmptyComponent={_renderEmptyList}
+        renderSectionHeader={({ section: { title } }) => {
+          return !jobState.isLoading ? <Section>{title}</Section> : null;
+        }}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(game: JobInterface) => `${game.id}`}
-        onEndReachedThreshold={0}
-        initialNumToRender={5}
-        onEndReached={_handleEndReached}
         stickySectionHeadersEnabled={false}
+        windowSize={25}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={5}
+        onEndReachedThreshold={0}
+        initialNumToRender={10}
+        keyExtractor={(game: JobInterface) => `${game.id}`}
         refreshControl={
           <RefreshControl
             refreshing={state.refreshing}
