@@ -33,52 +33,42 @@ export default async function jobActions(
 
         const data = (await response.json()) as JobInterface[];
 
-        const jobs = data.reduce<{ title: string; data: JobInterface[] }[]>(
-          (acc, job) => {
-            const [
-              todaySection,
-              yesterdaySection,
-              last7DaysSection,
-              Last30DaysSection
-            ] = acc;
+        const jobs = data.reduce<{title: string, data: JobInterface[]}[]>((acc, job) => {
+          const [todaySection, yesterdaySection, last7DaysSection, Last30DaysSection] = acc;
+          
+          const { date, tags } = job;
+          
+          if (!date) return acc;
+          
+          if (tags.length) {
+            const colors = generateColor(tags.length)
+            // console.log(colors)
+            // @ts-ignore
+            job.tags = tags.map((name, index) => ({name, color: colors[index]}))
+          }
 
-            const { date, tags } = job;
+          const section = getJobPeriod(date);
 
-            if (!date) return acc;
+          if (section === todaySection.title) {
+            todaySection.data.push(job);
+          } 
 
-            if (tags.length) {
-              // @ts-ignore
-              job.tags = tags.map((name) => ({ name, color: generateColor() }));
-            }
+          if (section === yesterdaySection.title) {
+            yesterdaySection.data.push(job);
+          } 
 
-            const section = getJobPeriod(date);
+          if (section === last7DaysSection.title) {
+            last7DaysSection.data.push(job);
+          } 
 
-            if (section === todaySection.title) {
-              todaySection.data.push(job);
-            }
+          if (section === Last30DaysSection.title) {
+            Last30DaysSection.data.push(job);
+          }
 
-            if (section === yesterdaySection.title) {
-              yesterdaySection.data.push(job);
-            }
+          acc = [...acc, todaySection, yesterdaySection, last7DaysSection, Last30DaysSection]
 
-            if (section === last7DaysSection.title) {
-              last7DaysSection.data.push(job);
-            }
-
-            if (section === Last30DaysSection.title) {
-              Last30DaysSection.data.push(job);
-            }
-
-            acc = [
-              ...acc,
-              todaySection,
-              yesterdaySection,
-              last7DaysSection,
-              Last30DaysSection
-            ];
-
-            return acc;
-          },
+           return acc
+        }, 
           [
             {
               title: 'Today',
