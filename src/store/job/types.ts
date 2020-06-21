@@ -16,11 +16,16 @@ export enum JOB_ACTION_TYPES {
   PAGINATE_JOBS = 'FETCH_ALL_JOBS'
 }
 
+export type JobType = {
+  title: string;
+  data: JobInterface[];
+};
+
 // TYPESCRIPT TYPES
 export type JobInitialState = {
   isLoading: boolean;
   error?: string | null;
-  jobs: {title: string, data: JobInterface[]}[];
+  jobs: JobType[];
 };
 
 export type JobInterface = {
@@ -31,7 +36,7 @@ export type JobInterface = {
   company: string;
   company_logo: string;
   position: string;
-  tags: {name: string, color: string}[];
+  tags: { name: string; color: string }[];
   description: string;
   original: boolean;
   verified: boolean;
@@ -40,5 +45,8 @@ export type JobInterface = {
 
 export type JobAction =
   | { type: JOB_TYPES.GET_JOB_STARTED }
-  | { type: JOB_TYPES.GET_JOB_SUCCESS; payload: {title: string, data: JobInterface[]}[] }
+  | {
+      type: JOB_TYPES.GET_JOB_SUCCESS;
+      payload: JobType[];
+    }
   | { type: JOB_TYPES.GET_JOB_ERROR; payload: String };
