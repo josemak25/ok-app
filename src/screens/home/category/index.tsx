@@ -7,19 +7,23 @@ import LaptopIcon from '../../../../assets/icons/laptop';
 import CustomerIcon from '../../../../assets/icons/customer';
 import MarketingIcon from '../../../../assets/icons/marketing';
 import DesignIcon from '../../../../assets/icons/design';
+import NonTechIcon from '../../../../assets/icons/non_tech';
 
 import { CategoryName, CategoryLogo } from './styles';
 
 interface CategoryProps {
   testID?: string;
   name: string;
+  query: string;
+  handleCategory(query: string): void;
 }
 
 export default function Category(props: CategoryProps) {
-  const { name } = props;
+  const { name, handleCategory, query } = props;
 
   return (
     <Card
+      onPress={() => handleCategory(query)}
       style={{
         width: RFValue(70),
         height: '100%',
@@ -43,6 +47,7 @@ export default function Category(props: CategoryProps) {
         {name === 'customer support' && <CustomerIcon />}
         {name === 'marketing' && <MarketingIcon />}
         {name === 'design' && <DesignIcon />}
+        {name === 'non tech' && <NonTechIcon />}
       </CategoryLogo>
 
       <CategoryName>{name}</CategoryName>
