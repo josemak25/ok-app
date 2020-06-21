@@ -14,13 +14,13 @@ import { JobInterface } from '../../store/job/types';
 import LoadingJobs from '../../components/loadingJobs';
 import jobActions from '../../store/job/actions';
 import { useStore } from '../../store';
-import _renderEmptyList from './renderEmptyList';
+import RenderEmptyList from './renderEmptyList';
 
 import { Container, WelcomeText, SearchJob, Section } from './styles';
 
 interface HomeScreenProps extends NavigationInterface {
   testID?: string;
-  categories: { name: string }[];
+  categories: { name: string; query: string }[];
 }
 
 export default function HomeScreen(props: HomeScreenProps) {
@@ -51,6 +51,18 @@ export default function HomeScreen(props: HomeScreenProps) {
   };
 
   const handleSubmit = () => setState({ ...state, searchWord: '' });
+
+  const _handleCategory = async (query: string) => {
+    if (!query) {
+      return await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
+    }
+
+    await jobActions(
+      dispatch,
+      JOB_ACTION_TYPES.FETCH_ALL_JOBS,
+      `?tags=${query}`
+    );
+  };
 
   const _rowRenderer = ({ item }: any) => (
     <Job {...item} navigation={navigation} />
@@ -98,7 +110,11 @@ export default function HomeScreen(props: HomeScreenProps) {
         contentContainerStyle={{ height: RFValue(100), paddingLeft: 10 }}
       >
         {categories.map((category) => (
-          <Category {...category} key={category.name} />
+          <Category
+            {...category}
+            key={category.name}
+            handleCategory={_handleCategory}
+          />
         ))}
       </ScrollView>
     </Fragment>
@@ -111,35 +127,41 @@ export default function HomeScreen(props: HomeScreenProps) {
         backgroundColor: colors.DARK_BG_COLOR
       }}
     >
-      <SectionList
-        style={{ flex: 1 }}
-        sections={jobState.jobs}
-        renderItem={_rowRenderer}
-        ListHeaderComponent={_renderHeader}
-        ListFooterComponent={_renderFooter}
-        ListFooterComponentStyle={{ paddingTop: 5 }}
-        //@ts-ignore
-        ListEmptyComponent={_renderEmptyList}
-        renderSectionHeader={({ section: { title } }) => {
-          return !jobState.isLoading ? <Section>{title}</Section> : null;
-        }}
-        showsVerticalScrollIndicator={false}
-        stickySectionHeadersEnabled={false}
-        windowSize={25}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={5}
-        onEndReachedThreshold={0}
-        initialNumToRender={10}
-        keyExtractor={(game: JobInterface) => `${game.id}`}
-        refreshControl={
-          <RefreshControl
-            refreshing={state.refreshing}
-            onRefresh={_onRefresh}
-            tintColor={colors.ACTION_BG_COLOR}
-            colors={[colors.ACTION_BG_COLOR]}
-          />
-        }
-      />
+      {!jobState.isLoading ? (
+        <SectionList
+          style={{ flex: 1 }}
+          sections={jobState.jobs}
+          renderItem={_rowRenderer}
+          ListHeaderComponent={_renderHeader}
+          ListFooterComponent={_renderFooter}
+          //@ts-ignore
+          ListFooterComponentStyle={{ paddingTop: 5 }}
+          renderSectionHeader={({ section: { title } }) => {
+            return !jobState.isLoading ? <Section>{title}</Section> : null;
+          }}
+          showsVerticalScrollIndicator={false}
+          stickySectionHeadersEnabled={false}
+          windowSize={25}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
+          onEndReachedThreshold={0}
+          initialNumToRender={10}
+          keyExtractor={(game: JobInterface) => `${game.id}`}
+          refreshControl={
+            <RefreshControl
+              refreshing={state.refreshing}
+              onRefresh={_onRefresh}
+              tintColor={colors.ACTION_BG_COLOR}
+              colors={[colors.ACTION_BG_COLOR]}
+            />
+          }
+        />
+      ) : (
+        <RenderEmptyList
+          isLoading={jobState.isLoading}
+          renderHeader={_renderHeader}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -147,9 +169,10 @@ export default function HomeScreen(props: HomeScreenProps) {
 HomeScreen.defaultProps = {
   categories: [
     { name: 'remote jobs' },
-    { name: 'software development' },
-    { name: 'customer support' },
-    { name: 'marketing' },
-    { name: 'design' }
+    { name: 'software development', query: 'dev' },
+    { name: 'customer support', query: 'customer+support' },
+    { name: 'marketing', query: 'marketing' },
+    { name: 'design', query: 'design' },
+    { name: 'non tech', query: 'non+tech' }
   ]
 };
