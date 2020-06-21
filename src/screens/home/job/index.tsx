@@ -48,6 +48,8 @@ const Job = (props: JobProps) => {
     navigation.navigate('DetailScreen', { jobLink: url });
   };
 
+  if (!company && !company_logo) return null;
+
   return (
     <Card
       onPress={handleNavigation}
