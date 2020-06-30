@@ -1,6 +1,6 @@
 import React from 'react';
-import Card from '../../../components/card';
 import { RFValue } from 'react-native-responsive-fontsize';
+import Card from '../../../components/card';
 import boxShadow from '../../../utils/boxShadows';
 import SummerIcon from '../../../../assets/icons/summer';
 import LaptopIcon from '../../../../assets/icons/laptop';

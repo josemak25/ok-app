@@ -106,6 +106,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
         style={{ marginTop: 20 }}
         contentContainerStyle={{ height: RFValue(100), paddingLeft: 10 }}
       >
@@ -141,6 +142,8 @@ export default function HomeScreen(props: HomeScreenProps) {
           }}
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={false}
+          KeyboardAwareScrollView
+          keyboardShouldPersistTaps="always"
           windowSize={25}
           removeClippedSubviews={true}
           maxToRenderPerBatch={5}
