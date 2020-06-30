@@ -1,14 +1,13 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { NavigationInterface } from '../../types';
-import Card from '../../../components/card';
-import { JobInterface } from '../../../store/job/types';
-import hexToRGB from '../../../utils/hexToRGB';
 import { RFValue } from 'react-native-responsive-fontsize';
+import Card from '../../../components/card';
+import hexToRGB from '../../../utils/hexToRGB';
+import { JobInterface } from '../../../store/job/types';
 import boxShadow from '../../../utils/boxShadows';
 import { useTheme } from '../../../theme';
 import getCompanyLogo from '../../../utils/getCompanyLogo';
-import generateColor from '../../../utils/generateColor';
 import timeSince from '../../../utils/timeSince';
 
 import {
@@ -113,7 +112,10 @@ const Job = (props: JobProps) => {
             ) : (
               <CompanyName
                 style={{
-                  fontSize: RFValue(fonts.LARGE_SIZE * 2.5),
+                  fontSize:
+                    tags.length <= 3
+                      ? RFValue(fonts.LARGE_SIZE * 1.8)
+                      : RFValue(fonts.LARGE_SIZE * 2.1),
                   color: colors.BOX_SHADOW_COLOR
                 }}
               >

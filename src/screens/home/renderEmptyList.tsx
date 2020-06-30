@@ -12,7 +12,11 @@ export default function RenderEmptyList(props: RenderEmptyListProps) {
   const { isLoading, renderHeader } = props;
 
   return (
-    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={{ flex: 1 }}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="always"
+    >
       {renderHeader()}
       {[...new Array(5)].map((_, index) => (
         <SkeletonContent
