@@ -4,12 +4,12 @@ import { RFValue } from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
   width: 100%;
+  height: ${RFValue(55)}px;
   flex-direction: row;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.WHITE_BG_COLOR};
   border-radius: 5px;
-  padding: ${RFValue(15)}px;
-  padding-right: ${RFValue(0)}px;
+  padding: 0px ${RFValue(15)}px;
 `;
 
 export const TextInput = styled.TextInput`
