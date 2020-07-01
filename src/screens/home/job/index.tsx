@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { NavigationInterface } from '../../types';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Card from '../../../components/card';
@@ -8,7 +8,6 @@ import { JobInterface } from '../../../store/job/types';
 import boxShadow from '../../../utils/boxShadows';
 import { useTheme } from '../../../theme';
 import getCompanyLogo from '../../../utils/getCompanyLogo';
-import timeSince from '../../../utils/timeSince';
 
 import {
   Container,
@@ -54,6 +53,7 @@ const Job = (props: JobProps) => {
       onPress={handleNavigation}
       style={{
         width: '100%',
+        minHeight: RFValue(120),
         flexDirection: 'row',
         alignItems: 'flex-start',
         padding: 20,
@@ -81,7 +81,11 @@ const Job = (props: JobProps) => {
 
       <RightContainer>
         <Container>
-          <JobPostedTime>{timeSince(date)}</JobPostedTime>
+          <JobPostedTime
+            style={{ marginBottom: !tags.length ? RFValue(10) : 0 }}
+          >
+            {date}
+          </JobPostedTime>
           <CompanyLogo
             style={[
               boxShadow({
@@ -100,14 +104,18 @@ const Job = (props: JobProps) => {
             ]}
           >
             {company_logo ? (
-              <Image
+              <FastImage
                 style={{
                   width: tags.length <= 3 ? RFValue(40) : RFValue(50),
                   height: tags.length <= 3 ? RFValue(40) : RFValue(50),
                   borderRadius:
                     tags.length <= 3 ? RFValue(40 / 2) : RFValue(50 / 2)
                 }}
-                source={{ uri: company_logo, cache: 'force-cache' }}
+                source={{
+                  uri: company_logo,
+                  priority: FastImage.priority.high
+                }}
+                resizeMode={FastImage.resizeMode.contain}
               />
             ) : (
               <CompanyName
