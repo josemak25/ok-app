@@ -1,6 +1,3 @@
-import API from '../../libs/api';
-import getJobPeriod from '../../utils/getJobPeriod';
-import generateColor from '../../utils/generateColor';
 import {
   JOB_TYPES,
   JOB_ACTION_TYPES,
@@ -8,6 +5,19 @@ import {
   JobInterface,
   JobType
 } from './types';
+import API from '../../libs/api';
+import getJobPeriod from '../../utils/getJobPeriod';
+import generateColor from '../../utils/generateColor';
+
+//@ts-ignore
+import TimeAgo from 'javascript-time-ago';
+
+// Load locale-specific relative date/time formatting rules.
+// Add locale-specific relative date/time formatting rules.
+TimeAgo.addLocale(require('javascript-time-ago/locale/en'));
+
+// Create relative date/time formatter.
+const timeAgo = new TimeAgo('en-US');
 
 const getJobStarted = (): JobAction => ({ type: JOB_TYPES.GET_JOB_STARTED });
 
@@ -54,6 +64,10 @@ export default async function jobActions(
           }
 
           const section = getJobPeriod(date);
+
+          const formattedTime = timeAgo.format(new Date(date), 'twitter');
+
+          job.date = formattedTime;
 
           if (sectionMap.has(section)) {
             const existingSection = sectionMap.get(section) as JobType;
