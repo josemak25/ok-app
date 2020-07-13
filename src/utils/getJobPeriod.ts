@@ -1,5 +1,16 @@
+import timeSince from './timeSince';
+
+const withInYesterday = { '1d': '1d', '2d': '2d' } as { [key: string]: string };
+
+const withIn7Days = ['3d', '4d', '5d', '6d', '7d', '8d'].reduce<{
+  [key: string]: string;
+}>((acc, date: string) => {
+  acc[date] = date;
+  return acc;
+}, {});
+
 export default function getJobPeriod(date: Date) {
-  if (!date) throw new Error('Invalid date');
+  if (!Date.parse(String(date))) throw new Error('Invalid date');
 
   if (isToday(date)) return `Today`;
   if (isYesterday(date)) return `Yesterday`;
@@ -20,33 +31,11 @@ const isToday = (jobDate: Date) => {
 };
 
 const isYesterday = (jobDate: Date) => {
-  const date = new Date(jobDate);
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  return (
-    date.getDate() === yesterday.getDate() &&
-    date.getMonth() === yesterday.getMonth() &&
-    date.getFullYear() === yesterday.getFullYear()
-  );
+  const date = timeSince(jobDate);
+  if (withInYesterday[date]) return true;
 };
 
 const isLast7Days = (jobDate: Date) => {
-  const date = new Date(jobDate);
-
-  const time = new Date(date.toLocaleDateString()).getTime();
-
-  const last7Days = new Date();
-  const dayBeforeYesterday = new Date();
-
-  dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
-  last7Days.setDate(dayBeforeYesterday.getDate() - 7);
-
-  const startTime = new Date(last7Days.toLocaleDateString()).getTime();
-  const endTime = new Date(dayBeforeYesterday.toLocaleDateString()).getTime();
-
-  if (startTime <= endTime) throw new RangeError('Invalid interval');
-
-  return time >= startTime && time <= endTime;
+  const date = timeSince(jobDate);
+  if (withIn7Days[date]) return true;
 };
