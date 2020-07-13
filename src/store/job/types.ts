@@ -13,19 +13,14 @@ export enum JOB_TYPES {
 
 export enum JOB_ACTION_TYPES {
   FETCH_ALL_JOBS = 'FETCH_ALL_JOBS',
-  PAGINATE_JOBS = 'FETCH_ALL_JOBS'
+  PAGINATE_JOBS = 'PAGINATE_JOBS'
 }
-
-export type JobType = {
-  title: string;
-  data: JobInterface[];
-};
 
 // TYPESCRIPT TYPES
 export type JobInitialState = {
   isLoading: boolean;
   error?: string | null;
-  jobs: JobType[];
+  jobs: JobInterface[];
 };
 
 export type JobInterface = {
@@ -41,12 +36,13 @@ export type JobInterface = {
   original: boolean;
   verified: boolean;
   url: string;
+  section?: string;
 };
 
 export type JobAction =
   | { type: JOB_TYPES.GET_JOB_STARTED }
   | {
       type: JOB_TYPES.GET_JOB_SUCCESS;
-      payload: JobType[];
+      payload: JobInterface[];
     }
-  | { type: JOB_TYPES.GET_JOB_ERROR; payload: String };
+  | { type: JOB_TYPES.GET_JOB_ERROR; payload: string | null };

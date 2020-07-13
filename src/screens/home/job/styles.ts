@@ -33,7 +33,7 @@ export const JobTag = styled.View`
 `;
 
 export const JobTagName = styled.Text`
-  font-size: ${({ theme }) => RFValue(theme.fonts.MEDIUM_SIZE)}px;
+  font-size: ${({ theme }) => RFValue(theme.fonts.MEDIUM_SIZE - 4)}px;
   font-family: ${({ theme }) => theme.fonts.CORE_SANS_MEDIUM};
   color: ${({ theme }) => theme.colors.BLACK_FONT_COLOR};
   text-transform: uppercase;
