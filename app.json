@@ -2,10 +2,7 @@
   "expo": {
     "name": "OkApp",
     "slug": "OkApp",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,15 +14,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "OkApp"
     },
     "android": {
-      "package": "OkApp.com"
+      "package": "com.OkApp"
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
   }
