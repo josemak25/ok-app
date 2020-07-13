@@ -11,7 +11,7 @@ type LoadingJobsProps = {
 export default function LoadingJobs({ size }: LoadingJobsProps) {
   const { colors } = useTheme();
 
-  const loaderSize = size ? size : Platform.OS === 'ios' ? 'large' : 45;
+  const loaderSize = Platform.OS === 'ios' ? 'large' : size;
 
   return (
     <Container>
