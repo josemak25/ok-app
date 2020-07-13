@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { enableScreens } from 'react-native-screens';
-import AppLoading from './src/components/AppLoading';
+import React, { useState, useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import loadResources from './src/libs/loadResources';
 import AppRouter from './src';
 
 export default function App() {
-  enableScreens();
-
   const [isAppReady, setIsAppReady] = useState(false);
 
-  return isAppReady ? (
-    <AppRouter />
-  ) : (
-    <AppLoading setIsAppReady={setIsAppReady} />
-  );
+  useEffect(() => {
+    (async () => {
+      await SplashScreen.preventAutoHideAsync();
+      await loadResources();
+      await SplashScreen.hideAsync();
+      setIsAppReady(true);
+    })();
+  }, []);
+
+  return isAppReady ? <AppRouter /> : null;
 }

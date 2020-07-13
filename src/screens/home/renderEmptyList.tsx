@@ -1,23 +1,17 @@
-import React from 'react';
-import { ScrollView } from 'react-native';
+import React, { Fragment } from 'react';
 import SkeletonContent from 'react-native-skeleton-content';
 import { useTheme } from '../../theme';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-type RenderEmptyListProps = { isLoading: boolean; renderHeader(): void };
+type RenderEmptyListProps = { isLoading: boolean };
 
-export default function RenderEmptyList(props: RenderEmptyListProps) {
+export default function renderEmptyList(props: RenderEmptyListProps) {
   const { colors } = useTheme();
 
-  const { isLoading, renderHeader } = props;
+  const { isLoading } = props;
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="always"
-    >
-      {renderHeader()}
+    <Fragment>
       {[...new Array(5)].map((_, index) => (
         <SkeletonContent
           key={index.toString()}
@@ -73,6 +67,6 @@ export default function RenderEmptyList(props: RenderEmptyListProps) {
           ]}
         ></SkeletonContent>
       ))}
-    </ScrollView>
+    </Fragment>
   );
 }

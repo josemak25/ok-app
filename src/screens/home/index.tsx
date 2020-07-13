@@ -1,32 +1,26 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { ScrollView, RefreshControl, SectionList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { RefreshControl, FlatList, StatusBar } from 'react-native';
+//@ts-ignore
+import { OptimizedFlatList } from 'react-native-optimized-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { AntDesign } from '@expo/vector-icons';
-import { NavigationInterface } from '../types';
-import { useTheme } from '../../theme';
-import InputField from '../../components/input';
-import boxShadow from '../../utils/boxShadows';
-import Category from './category';
-import Job from './job';
 import { JOB_ACTION_TYPES } from '../../store/job/types';
-import { JobInterface } from '../../store/job/types';
 import LoadingJobs from '../../components/loadingJobs';
 import jobActions from '../../store/job/actions';
+import renderEmptyList from './renderEmptyList';
+import { NavigationInterface } from '../types';
 import { useStore } from '../../store';
-import RenderEmptyList from './renderEmptyList';
-
-import { Container, WelcomeText, SearchJob, Section } from './styles';
+import { useTheme } from '../../theme';
+import Header from './header';
+import Job from './job';
 
 interface HomeScreenProps extends NavigationInterface {
   testID?: string;
-  categories: { name: string; query: string }[];
 }
 
 export default function HomeScreen(props: HomeScreenProps) {
   const { colors } = useTheme();
 
-  const { categories, navigation } = props;
+  const { navigation } = props;
 
   const {
     dispatch,
@@ -35,7 +29,9 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   const [state, setState] = useState({
     searchWord: '',
-    refreshing: false
+    refreshing: false,
+    callOnScrollEnd: false,
+    page: 0
   });
 
   useEffect(() => {
@@ -44,81 +40,49 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   }, []);
 
-  const _onRefresh = async () => {
+  const onRefresh = async () => {
     setState({ ...state, refreshing: true });
+    jobState.jobs.length = 0;
     await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
     setState({ ...state, refreshing: false });
   };
 
   const handleSubmit = () => setState({ ...state, searchWord: '' });
 
-  const _handleCategory = async (query: string) => {
+  const _handleCategory = (query: string) => {
+    jobState.jobs.length = 0;
+
     if (!query) {
-      return await jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
+      return jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS);
     }
 
-    await jobActions(
-      dispatch,
-      JOB_ACTION_TYPES.FETCH_ALL_JOBS,
-      `?tags=${query}`
-    );
+    jobActions(dispatch, JOB_ACTION_TYPES.FETCH_ALL_JOBS, `?tags=${query}`);
   };
 
-  const _rowRenderer = ({ item }: any) => (
+  const handleEndReach = async () => {
+    if (!state.callOnScrollEnd) return;
+
+    const { page } = state;
+    const skip = page + 1;
+    await jobActions(dispatch, JOB_ACTION_TYPES.PAGINATE_JOBS, skip);
+    setState({ ...state, page: skip, callOnScrollEnd: false });
+  };
+
+  const renderItem = ({ item }: any) => (
     <Job {...item} navigation={navigation} />
   );
 
-  const _renderFooter = () => <LoadingJobs size={30} />;
+  const renderFooter = () => {
+    return state.callOnScrollEnd ? <LoadingJobs size={50} /> : null;
+  };
 
-  const _renderHeader = () => (
-    <Fragment>
-      <Container>
-        <WelcomeText>Find your Job</WelcomeText>
-        <InputField
-          placeholder="Search..."
-          onChangeText={(searchWord) => setState({ ...state, searchWord })}
-          onSubmitEditing={handleSubmit}
-          defaultValue={state.searchWord}
-          returnKeyType="search"
-          placeholderTextColor={colors.BOX_SHADOW_COLOR}
-          style={[
-            boxShadow({
-              elevation: 0.5,
-              width: 0,
-              height: 1,
-              shadowOpacity: 0.25,
-              shadowRadius: 2
-            }),
-            { marginTop: RFValue(30) }
-          ]}
-          inputStyle={{ paddingRight: 20 }}
-        >
-          <AntDesign
-            name="search1"
-            size={RFValue(20)}
-            color={colors.BOX_SHADOW_COLOR}
-          />
-        </InputField>
-
-        <SearchJob>Search by category</SearchJob>
-      </Container>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyboardShouldPersistTaps="always"
-        style={{ marginTop: 20 }}
-        contentContainerStyle={{ height: RFValue(100), paddingLeft: 10 }}
-      >
-        {categories.map((category) => (
-          <Category
-            {...category}
-            key={category.name}
-            handleCategory={_handleCategory}
-          />
-        ))}
-      </ScrollView>
-    </Fragment>
+  const renderHeader = () => (
+    <Header
+      searchWord={state.searchWord}
+      handleSubmit={handleSubmit}
+      onChangeText={(searchWord) => setState({ ...state, searchWord })}
+      handleCategory={_handleCategory}
+    />
   );
 
   return (
@@ -128,54 +92,37 @@ export default function HomeScreen(props: HomeScreenProps) {
         backgroundColor: colors.DARK_BG_COLOR
       }}
     >
-      {!jobState.isLoading ? (
-        <SectionList
-          style={{ flex: 1 }}
-          sections={jobState.jobs}
-          renderItem={_rowRenderer}
-          ListHeaderComponent={_renderHeader}
-          ListFooterComponent={_renderFooter}
-          //@ts-ignore
-          ListFooterComponentStyle={{ paddingTop: 5 }}
-          renderSectionHeader={({ section: { title } }) => {
-            return !jobState.isLoading ? <Section>{title}</Section> : null;
-          }}
-          showsVerticalScrollIndicator={false}
-          stickySectionHeadersEnabled={false}
-          KeyboardAwareScrollView
-          keyboardShouldPersistTaps="always"
-          windowSize={25}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={5}
-          onEndReachedThreshold={0}
-          initialNumToRender={10}
-          keyExtractor={(game: JobInterface) => `${game.id}`}
-          refreshControl={
-            <RefreshControl
-              refreshing={state.refreshing}
-              onRefresh={_onRefresh}
-              tintColor={colors.ACTION_BG_COLOR}
-              colors={[colors.ACTION_BG_COLOR]}
-            />
-          }
-        />
-      ) : (
-        <RenderEmptyList
-          isLoading={jobState.isLoading}
-          renderHeader={_renderHeader}
-        />
-      )}
+      <StatusBar
+        translucent
+        barStyle="dark-content"
+        backgroundColor={colors.DARK_BG_COLOR}
+      />
+      <FlatList
+        style={{ flex: 1 }}
+        data={jobState.jobs}
+        renderItem={renderItem}
+        ListHeaderComponent={renderHeader}
+        ListEmptyComponent={renderEmptyList}
+        ListFooterComponent={renderFooter}
+        ListFooterComponentStyle={{ padding: 10 }}
+        windowSize={25}
+        scrollEventThrottle={16}
+        initialNumToRender={10}
+        maxToRenderPerBatch={3}
+        removeClippedSubviews={true}
+        showsVerticalScrollIndicator={false}
+        onEndReachedThreshold={0.01}
+        onMomentumScrollEnd={handleEndReach}
+        onEndReached={() => setState({ ...state, callOnScrollEnd: true })}
+        refreshControl={
+          <RefreshControl
+            refreshing={state.refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.ACTION_BG_COLOR}
+            colors={[colors.ACTION_BG_COLOR]}
+          />
+        }
+      />
     </SafeAreaView>
   );
 }
-
-HomeScreen.defaultProps = {
-  categories: [
-    { name: 'remote jobs' },
-    { name: 'software development', query: 'dev' },
-    { name: 'customer support', query: 'customer+support' },
-    { name: 'marketing', query: 'marketing' },
-    { name: 'design', query: 'design' },
-    { name: 'non tech', query: 'non+tech' }
-  ]
-};

@@ -17,7 +17,7 @@ export default function jobReducer(state = jobInitialState, action: JobAction) {
         ...state,
         isLoading: false,
         error: null,
-        jobs: action.payload
+        jobs: [...state.jobs, ...action.payload]
       };
     }
 

@@ -1,6 +1,4 @@
 export default (date: Date) => {
-  if (!date) return undefined;
-
   const timestamp = new Date(date);
 
   if (isNaN(timestamp.getTime())) {
@@ -23,9 +21,6 @@ export default (date: Date) => {
 
     case Math.floor(timeDifference / month) > 1:
       return `${Math.floor(timeDifference / month)}m`;
-
-    case Math.floor(timeDifference / day) > 1:
-      return `${Math.floor(timeDifference / day)}d`;
 
     case Math.floor(timeDifference / hour) > 1:
       if (Math.floor(timeDifference / hour) > 24) {

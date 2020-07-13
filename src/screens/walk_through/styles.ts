@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import Device from '../../utils/device';
+import { DEVICE_FULL_WIDTH } from '../../utils/device';
 
 export const Container = styled.View`
   flex: 1;
@@ -37,12 +37,12 @@ export const VectorOneIllustrator = styled.Image`
   width: ${RFValue(500)}px;
   height: ${RFValue(500)}px;
   left: ${RFValue(-120)}px;
-  bottom: ${RFValue(Device.DEVICE_FULL_WIDTH <= 375 ? 70 : 40)}px;
+  bottom: ${RFValue(DEVICE_FULL_WIDTH <= 375 ? 70 : 40)}px;
 `;
 
 export const VectorTwoIllustrator = styled.Image`
   width: ${RFValue(430)}px;
-  height: ${RFValue(Device.DEVICE_FULL_WIDTH <= 375 ? 380 : 400)}px;
+  height: ${RFValue(DEVICE_FULL_WIDTH <= 375 ? 380 : 400)}px;
   left: ${RFValue(-130)}px;
   top: ${RFValue(30)}px;
 `;
