@@ -5,7 +5,10 @@ import timeSince from './timeSince';
 
 const formatJobTags = (tags: { name: string; color: string }[]) => {
   const colors = generateColor(tags.length);
-  return tags.map((name, index) => ({ name, color: colors[index] }));
+  return tags
+    .map(({ name }, index) => ({ name, color: colors[index] }))
+    .sort((a, b) => a.name.length - b.name.length)
+    .slice(0, 4);
 };
 
 const formatJobs = (jobs: JobInterface[], inMemoryCache: Map<any, any>) => {
