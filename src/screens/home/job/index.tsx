@@ -3,11 +3,11 @@ import FastImage from 'react-native-fast-image';
 import { NavigationInterface } from '../../types';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Card from '../../../components/card';
-import hexToRGB from '../../../utils/hexToRGB';
 import { JobInterface } from '../../../store/job/types';
 import boxShadow from '../../../utils/boxShadows';
 import { useTheme } from '../../../theme';
 import getCompanyLogo from '../../../utils/getCompanyLogo';
+import JobTag from '../job/tags';
 
 import { Section } from '../styles';
 import {
@@ -16,9 +16,7 @@ import {
   RightContainer,
   CompanyName,
   JobPosition,
-  JobTagsContainer,
-  JobTag,
-  JobTagName,
+  JobTagsWrapper,
   JobPostedTime,
   Verified,
   VerifiedText,
@@ -71,19 +69,11 @@ const Job = (props: JobProps) => {
           <JobPosition>{position}</JobPosition>
 
           {tags ? (
-            <JobTagsContainer>
-              {tags
-                .sort((a, b) => a.name.length - b.name.length)
-                .slice(0, 4)
-                .map(({ name, color }, index) => (
-                  <JobTag
-                    key={`${name + index.toString()}`}
-                    style={{ backgroundColor: hexToRGB(color, 0.4) }}
-                  >
-                    <JobTagName style={{ color }}>{name}</JobTagName>
-                  </JobTag>
-                ))}
-            </JobTagsContainer>
+            <JobTagsWrapper>
+              {tags.map((tag, index) => (
+                <JobTag key={`${name + index.toString()}`} {...tag} />
+              ))}
+            </JobTagsWrapper>
           ) : null}
         </LeftContainer>
 
@@ -145,9 +135,7 @@ const Job = (props: JobProps) => {
                 <VerifiedText>Verified</VerifiedText>
               </Verified>
             ) : (
-              <Verified
-                style={{ backgroundColor: colors.WHITE_BG_COLOR }}
-              ></Verified>
+              <Verified style={{ backgroundColor: colors.WHITE_BG_COLOR }} />
             )}
           </Container>
         </RightContainer>

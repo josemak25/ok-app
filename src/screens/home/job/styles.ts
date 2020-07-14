@@ -17,14 +17,14 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const JobTagsContainer = styled.View`
+export const JobTagsWrapper = styled.View`
   width: 90%;
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: 20px;
 `;
 
-export const JobTag = styled.View`
+export const JobTagContainer = styled.View`
   justify-content: center;
   align-items: center;
   padding: 10px;
